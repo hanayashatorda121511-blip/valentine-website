@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine Love</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .hidden { display: none; }
+    #questionPage {
+      transform: scale(1);
+      transition: 0.3s ease;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      margin: 8px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #yesBtn { background: #FF5E87; color: black; }
+    #noBtn { background: #444; color: white; }
+    #messagePage, .sectionPage {
+      animation: fadeIn 0.8s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    #sectionContainer { margin-top: 20px; }
+    input {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- MUSIC -->
+<audio id="bgMusic" loop>
+  <source src="aphrodite.mp3" type="audio/mpeg">
+</audio>
+
+<!-- QUESTION PAGE -->
+<div id="questionPage">
+  <h1>Will you be my Valentine?</h1>
+  <button id="yesBtn">Yes 💖</button>
+  <button id="noBtn">No 😢</button>
+</div>
+
+<!-- POST-YES MESSAGE -->
+<div id="messagePage" class="hidden">
+  <h1>YAY!!! 💕</h1>
+  <p>Thank you, baby — I love you so much!</p>
+  <button onclick="nextSection()">Proceed</button>
+</div>
+
+<!-- SECTIONS -->
+<div id="sectionContainer" class="hidden"></div>
+
+<script>
+  const yes = document.getElementById("yesBtn");
+  const no = document.getElementById("noBtn");
+  const question = document.getElementById("questionPage");
+  const message = document.getElementById("messagePage");
+  const sections = document.getElementById("sectionContainer");
+  const music = document.getElementById("bgMusic");
+
+  let noClicks = 0;
+
+  no.addEventListener("click", () => {
+    noClicks++;
+    no.style.transform = `translate(${Math.random()*150 - 75}px, ${Math.random()*150 - 75}px)`;
+    no.style.fontSize = `${16 + noClicks*4}px`;
+  });
+
+  yes.addEventListener("click", () => {
+    question.classList.add("hidden");
+    message.classList.remove("hidden");
+    music.play();
+    // confetti
+    import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js')
+      .then(({ default: confetti }) => {
+        confetti({ particleCount: 200, spread: 180 });
+      });
+  });
+
+  const data = [
+    {
+      title: "How It All Started 💭",
+      text: `Love, sometimes I stop and think about how everything started …`,
+      pass: "0104",
+      hint: "Our anniversary 💞"
+    },
+    {
+      title: "The Day It Became Real 🗓️",
+      text: `January 4 is a date I will always keep close to my heart…`,
+      pass: "Apple",
+      hint: "Your name 🍎"
+    },
+    {
+      title: "Why I Love You 💞",
+      text: `Baby, I love you for so many reasons…`,
+      pass: "Ilar",
+      hint: "A name only we understand 💌"
+    },
+    {
+      title: "My Promise 🤍",
+      text: `Love, I promise to choose you every single day…`,
+      pass: "121511",
+      hint: "Our date, our numbers 💖"
+    }
+  ];
+
+  let idx = 0;
+
+  function showSection() {
+    const s = data[idx];
+    sections.innerHTML = `
+      <div class="sectionPage">
+        <h2>${s.title}</h2>
+        <p>${s.text}</p>
+        <p>Enter Password: <input id="pw"></p>
+        <p><small>Hint: ${s.hint}</small></p>
+        <button onclick="checkPass()">Submit</button>
+      </div>
+    `;
+  }
+
+  function checkPass() {
+    const val = document.getElementById("pw").value;
+    if (val === data[idx].pass) {
+      idx++;
+      if (idx < data.length) {
+        showSection();
+      } else {
+        sections.innerHTML = `
+          <h2>Happy Valentine's Day, my love 💕</h2>
+          <p>I choose you — always, baby.</p>
+        `;
+      }
+    } else {
+      alert("❌ No, you’re wrong… are you really my baby? 🤨💔");
+    }
+  }
+
+  function nextSection() {
+    message.classList.add("hidden");
+    sections.classList.remove("hidden");
+    showSection();
+  }
+</script>
+
+</body>
+</html>
